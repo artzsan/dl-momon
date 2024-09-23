@@ -69,23 +69,33 @@ const downloadImages = () => {
     })
 }
 
-window.onload = () => {
-  let parent = document.getElementById("post-meta")
-  const elem = document.createElement("div")
-  elem.textContent = "ダウンロード"
-  Object.assign(elem.style, {
-    display: "inline-block",
-    color: "rgba(255, 255, 255, 1)",
-    cursor: "pointer",
-    margin: "0 0 15px 10px",
-    padding: "0 10px",
-    lineHeight: "28px",
-    textAlign: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: "3px",
-  })
-  elem.addEventListener("click", () => {
-    downloadImages()
-  })
-  parent.appendChild(elem)
-}
+const targetNode = document.body
+const observer = new MutationObserver(mutationsList => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === "childList") {
+      let parent = document.getElementById("post-meta")
+      if (parent) {
+        const elem = document.createElement("div")
+        elem.textContent = "ダウンロード"
+        Object.assign(elem.style, {
+          display: "inline-block",
+          color: "rgba(255, 255, 255, 1)",
+          cursor: "pointer",
+          margin: "0 0 15px 10px",
+          padding: "0 10px",
+          lineHeight: "28px",
+          textAlign: "center",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderRadius: "3px",
+        })
+        elem.addEventListener("click", () => {
+          downloadImages()
+        })
+        parent.appendChild(elem)
+        observer.disconnect()
+      }
+    }
+  }
+})
+
+observer.observe(targetNode, {childList: true, subtree: true})
